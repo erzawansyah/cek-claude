@@ -20,18 +20,19 @@ export const wa = (text: string) =>
   `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 
 export type Project = {
-  name: string; url: string; type: string; city: string | null; days: number | null;
+  name: string; title: string; url: string; type: string; city: string | null; days: number | null;
   approved: boolean; // izin klien untuk tampil
-  shot?: string; // screenshot HP
+  shot?: string; // screenshot WebP di /public/proyek; tanpa shot = kartu hijau berisi nama domain
 };
 
+// Urutan = urutan tampil. Pertama tampil besar, terakhir tampil lebar.
 // Usaha dulu, lalu organisasi/sekolah. Hanya yang approved=true yang tampil.
 export const projects: Project[] = [
-  { name: "terangsejati.com", url: "https://terangsejati.com", type: "Toko buku online", city: null, days: null, approved: true, shot: "/proyek/terangsejati.com.webp" },
-  { name: "kanjabung.com", url: "https://kanjabung.com", type: "Organisasi usaha", city: "Jawa Timur", days: null, approved: true },
-  { name: "paramitra.or.id", url: "https://paramitra.or.id", type: "Organisasi", city: null, days: null, approved: true, shot: "/proyek/paramitra.or.id.webp" },
-  { name: "lpmfenomena.com", url: "https://lpmfenomena.com", type: "Pers mahasiswa", city: "Malang", days: null, approved: true, shot: "/proyek/lpmfenomena.com.webp" },
-  { name: "smanasionalmalang.sch.id", url: "https://smanasionalmalang.sch.id", type: "Sekolah (SMA)", city: "Malang", days: null, approved: true, shot: "/proyek/smanasionalmalang.sch.id.webp" },
+  { name: "terangsejati.com", title: "Terang Sejati", url: "https://terangsejati.com", type: "Toko buku online", city: null, days: null, approved: true, shot: "/proyek/terangsejati.com.webp" },
+  { name: "kanjabung.com", title: "KAN Jabung", url: "https://kanjabung.com", type: "Organisasi usaha", city: "Jawa Timur", days: null, approved: true },
+  { name: "paramitra.or.id", title: "Paramitra", url: "https://paramitra.or.id", type: "Organisasi", city: null, days: null, approved: true, shot: "/proyek/paramitra.or.id.webp" },
+  { name: "lpmfenomena.com", title: "LPM Fenomena", url: "https://lpmfenomena.com", type: "Pers mahasiswa", city: "Malang", days: null, approved: true, shot: "/proyek/lpmfenomena.com.webp" },
+  { name: "smanasionalmalang.sch.id", title: "SMA Nasional Malang", url: "https://smanasionalmalang.sch.id", type: "Sekolah", city: "Malang", days: null, approved: true, shot: "/proyek/smanasionalmalang.sch.id.webp" },
 ];
 
 // Kalimat asli dari chat WA calon klien. Kosongkan = section disembunyikan.

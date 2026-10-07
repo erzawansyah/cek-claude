@@ -1,126 +1,148 @@
-import { site, wa, projects, complaints, story, team, services, steps, payment, plans, domainCost, testimonials, faq } from "@/lib/content";
+import { site, wa, projects, complaints, story, team, services, steps, payment, plans, domainCost, testimonials, faq, type Project } from "@/lib/content";
 
+const Arrow = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M7 17 17 7M8 7h9v9" /></svg>
+);
+const Chat = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5z" /></svg>
+);
+const Check = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CCFF4A" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m5 12.5 4.5 4.5L19 7" /></svg>
+);
 const Wa = ({ text, children, cls = "" }: { text: string; children: React.ReactNode; cls?: string }) => (
   <a className={`btn ${cls}`} href={wa(text)} target="_blank" rel="noopener noreferrer">{children}</a>
 );
-const Check = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d9f25c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><circle cx="12" cy="12" r="10" strokeWidth="1.5"/><path d="m8 12.5 3 3 5-6"/></svg>
-);
-const Arrow = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M7 17 17 7M8 7h9v9"/></svg>
-);
+
+const initials = (n: string) => n.split(" ").filter((w) => /^[A-Za-z]/.test(w)).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+const meta = (p: Project, withType = true) => [withType ? p.type : null, p.city, p.days ? `${p.days} hari pengerjaan` : null].filter(Boolean).join(" · ");
+
+function Tile({ p, i, last }: { p: Project; i: number; last: boolean }) {
+  const ext = { href: p.url, target: "_blank", rel: "noopener noreferrer" };
+  if (!p.shot)
+    return (
+      <a className="tile solid" {...ext}>
+        <p className="kind">{meta(p)}</p>
+        <div className="meta"><h3>{p.name.replace(/\.(?=[^.]+$)/, "\n.")}</h3><span className="arrow"><Arrow size={20} /></span></div>
+      </a>
+    );
+  if (i === 0)
+    return (
+      <a className="tile big span2 row2" {...ext}>
+        <div className="frame"><div>
+          <div className="chrome"><i /><i /><i /><span>{p.name}</span></div>
+          <img src={p.shot} alt={`Beranda ${p.name}`} width={1600} height={1000} />
+        </div></div>
+        <div className="meta">
+          <div><p className="kind">{p.type}</p><h3>{p.title}</h3>{meta(p, false) && <p>{meta(p, false)}</p>}</div>
+          <span className="arrow"><Arrow size={20} /></span>
+        </div>
+      </a>
+    );
+  return (
+    <a className={`tile${last ? " span2" : ""}`} {...ext}>
+      <img src={p.shot} alt={`Beranda ${p.name}`} width={1600} height={1000} loading="lazy" />
+      <div className="meta"><div><h3>{p.title}</h3><p>{meta(p)}</p></div><span className="arrow"><Arrow /></span></div>
+    </a>
+  );
+}
 
 export default function Home() {
   const shown = projects.filter((p) => p.approved);
-  const meta = (p: (typeof projects)[number]) => [p.type, p.city, p.days ? `${p.days} hari` : null].filter(Boolean).join(" · ");
-  const hasStory = story.paragraphs.length > 0;
 
   return (
     <main>
-      <header className="nav">
+      <header className="hero">
         <div className="wrap">
-          <a className="logo" href="#">likrea<i>.</i></a>
-          <nav>
-            {shown.length > 0 && <a href="#hasil">Hasil kerja</a>}
-            <a href="#layanan">Layanan</a><a href="#tim">Tim</a><a href="#harga">Harga</a><a href="#faq">FAQ</a>
-          </nav>
+          <div className="nav">
+            <a className="logo" href="#">likrea<span>.</span></a>
+            <nav aria-label="Utama">
+              {shown.length > 0 && <a href="#hasil">Hasil kerja</a>}
+              <a href="#layanan">Layanan</a><a href="#tim">Tim</a><a href="#harga">Harga</a><a href="#faq">FAQ</a>
+            </nav>
+          </div>
+          <div className="hero-grid">
+            <div>
+              <p className="eyebrow"><span className="dot" />Jasa website untuk usaha kecil</p>
+              <h1>Kami buatkan websitenya. Kami ajari cara pakainya.</h1>
+              <p className="lead">Website, Google, dan media sosial untuk usahamu. Domain atas namamu, akses admin kamu pegang, dan kamu tahu cara mengubah isinya sendiri.</p>
+              <div className="cta-row">
+                <Wa text="Halo Likrea, saya mau tanya soal website untuk usaha saya."><Chat />Tanya dulu via WhatsApp — gratis</Wa>
+                {site.replier && site.replyHours && <p>Dibalas oleh {site.replier}, biasanya dalam {site.replyHours} jam.</p>}
+              </div>
+            </div>
+            <div className="tagwrap">
+              <div className="tag">
+                <div className="hole" />
+                <p className="lbl">Serah terima</p>
+                <p className="to">Diserahkan kepada</p>
+                <p className="who">Pemilik usaha.<br />Bukan kami.</p>
+                <ul>
+                  <li><span className="ok"><Check /></span><div><b>Domain atas namamu</b><small>Terdaftar di akunmu sendiri</small></div></li>
+                  <li><span className="ok"><Check /></span><div><b>Akses admin</b><small>Password kamu ganti sendiri</small></div></li>
+                  <li><span className="ok"><Check /></span><div><b>Video panduan</b><small>Khusus untuk websitemu</small></div></li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
-      <section className="hero">
-        <div className="wrap">
-          <div>
-            <h1>Kami buatkan websitenya. Kami ajari cara pakainya. <em>Kuncinya tetap di tanganmu.</em></h1>
-            <p className="lead">Jasa website, Google, dan media sosial untuk usaha kecil. Domain atas namamu, akses admin kamu pegang, dan kamu tahu cara mengubah isinya sendiri.</p>
-            <Wa text="Halo Likrea, saya mau tanya soal website untuk usaha saya.">Tanya dulu via WhatsApp (gratis)</Wa>
-            {site.replier && site.replyHours && (
-              <p className="small" style={{ marginTop: 14, color: "#b9c4ad" }}>Dibalas oleh {site.replier}, biasanya dalam {site.replyHours} jam di jam kerja.</p>
-            )}
-          </div>
-          <aside className="keys">
-            <h3>Yang kamu pegang setelah serah terima</h3>
-            <ul style={{ padding: 0 }}>
-              <li><Check /><div><b>Domain atas namamu</b><span>Didaftarkan di akunmu, bukan akun kami.</span></div></li>
-              <li><Check /><div><b>Akses admin</b><span>Password diganti setelah serah terima.</span></div></li>
-              <li><Check /><div><b>Cara mengurusnya</b><span>Video panduan khusus untuk websitemu.</span></div></li>
-            </ul>
-          </aside>
+      {shown.length > 0 && (
+        <div className="strip">
+          <div className="wrap"><span className="eyebrow">Sudah online</span>{shown.map((p) => <span key={p.url}>{p.name}</span>)}</div>
         </div>
-        {site.heroPhoto && <div className="wrap"><img className="heroimg" src={site.heroPhoto} alt="Tim Likrea" width={1080} height={600} /></div>}
-      </section>
+      )}
 
       {shown.length > 0 && (
         <section id="hasil">
           <div className="wrap">
-            <p className="eyebrow">Hasil kerja</p>
-            <h2>Website yang sudah kami buat</h2>
-            <p className="sub">Semuanya online. Klik, buka di HP, dan cek sendiri.</p>
-            <div className="shots">
-              {shown.map((p, i) => (
-                <a className={`shot${i === 0 ? " first" : ""}`} key={p.url} href={p.url} target="_blank" rel="noopener noreferrer">
-                  <div className="frame">
-                    <div className="chrome"><i /><i /><i /><small>{p.name}</small></div>
-                    {p.shot
-                      ? <img src={p.shot} alt={`Tampilan ${p.name}`} loading={i < 2 ? "eager" : "lazy"} width={1000} height={625} />
-                      : <div className="noimg">{p.name}</div>}
-                  </div>
-                  <div className="meta">
-                    <div><h3>{p.name}</h3><p className="mute small">{meta(p)}</p></div>
-                    <span className="arrow"><Arrow /></span>
-                  </div>
-                </a>
-              ))}
+            <div className="head"><h2 style={{ maxWidth: 640 }}>Website yang sudah kami buat</h2><p>Semuanya online. Klik, buka di HP, dan cek sendiri.</p></div>
+            <div className="bento">
+              {shown.map((p, i) => <Tile key={p.url} p={p} i={i} last={i === shown.length - 1 && i > 0} />)}
             </div>
           </div>
         </section>
       )}
 
       {complaints.length > 0 && (
-        <section className="quotes">
+        <section className="mist">
           <div className="wrap">
-            <h2 style={{ marginBottom: 24 }}>Kalau ini terdengar akrab</h2>
-            {complaints.map((c) => <blockquote key={c}>“{c}”</blockquote>)}
+            <h2 style={{ marginBottom: 40 }}>Kalau ini terdengar akrab</h2>
+            {complaints.map((c) => <p key={c} className="d" style={{ fontSize: 28, fontWeight: 600, letterSpacing: "-.02em", marginBottom: 20 }}>“{c}”</p>)}
           </div>
         </section>
       )}
 
-      <section id="layanan">
+      <section id="layanan" className="mist">
         <div className="wrap">
-          <p className="eyebrow">Layanan</p>
-          <h2>Yang bisa kami kerjakan</h2>
-          <p className="sub">Di tiap layanan ada bagian yang kami ajarkan. Itu yang membedakan kami.</p>
-          <div className="svc">
-            {services.map((s) => (
-              <article key={s.name}>
-                <h3>{s.name}</h3>
-                <dl>
-                  <dt>Yang kamu dapat</dt><dd>{s.get}</dd>
-                  <div className="teach"><dt>Yang kami ajarkan</dt><dd>{s.teach}</dd></div>
-                </dl>
-              </article>
-            ))}
-          </div>
+          <h2 style={{ marginBottom: 16 }}>Yang bisa kami kerjakan</h2>
+          <p className="mute" style={{ maxWidth: 560, marginBottom: 56 }}>Tiap layanan ada bagian yang kami ajarkan. Supaya setelah selesai, kamu tidak perlu chat kami hanya untuk ganti harga.</p>
+          <div className="svc-row th"><span>Layanan</span><span>Yang kamu dapat</span><span>Yang kami ajarkan</span></div>
+          {services.map((s) => (
+            <div className="svc-row" key={s.name}><h3>{s.name}</h3><p>{s.get}.</p><p className="teach">{s.teach}.</p></div>
+          ))}
         </div>
       </section>
 
       <section id="tim" className="dark">
         <div className="wrap">
-          <p className="eyebrow" style={{ color: "#d9f25c" }}>Tim</p>
-          <h2>Siapa kami</h2>
-          {hasStory ? (
-            <div className="story">
-              {story.paragraphs.map((t) => <p key={t}>{t}</p>)}
-              <p>Sekarang kami bekerja di bawah {site.company}{site.nib ? ` (NIB ${site.nib})` : ""}.{story.nameReason ? ` ${story.nameReason}` : ""}</p>
+          <div className="team-head">
+            <h2>Siapa kami</h2>
+            <div>
+              {story.paragraphs.length > 0
+                ? story.paragraphs.map((t) => <p key={t}>{t}</p>)
+                : <p>Tim kecil, lima orang. Profil kami bisa dicek langsung di LinkedIn.</p>}
+              <p>Kami bekerja di bawah {site.company}{site.nib ? ` (NIB ${site.nib})` : ""}.{story.nameReason ? ` ${story.nameReason}` : ""}</p>
             </div>
-          ) : <p className="sub">Tim kecil di bawah {site.company}. Profil LinkedIn kami bisa dicek langsung.</p>}
+          </div>
           <div className="team">
             {team.map((m) => (
               <div className="member" key={m.name}>
-                {m.photo ? <img className="avatar" src={m.photo} alt={m.name} /> : <div className="avatar" aria-hidden>{m.name[0]}</div>}
+                {m.photo ? <img className="avatar" src={m.photo} alt={m.name} width={72} height={72} /> : <div className="avatar" aria-hidden>{initials(m.name)}</div>}
                 <h3>{m.name}</h3>
-                {m.role && <p className="role">{m.role}</p>}
-                {m.bio && <p className="role">{m.bio}</p>}
-                {m.linkedin && <a className="in" href={m.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Arrow /></a>}
+                {m.role && <p>{m.role}</p>}
+                {m.bio && <p>{m.bio}</p>}
+                {m.linkedin && <a href={m.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Arrow size={14} /></a>}
               </div>
             ))}
           </div>
@@ -129,32 +151,27 @@ export default function Home() {
 
       <section id="cara-kerja">
         <div className="wrap">
-          <p className="eyebrow">Cara kerja</p>
-          <h2 style={{ marginBottom: 24 }}>Prosesnya</h2>
+          <h2 style={{ marginBottom: 56 }}>Prosesnya</h2>
           <ol className="steps">
             {steps.map(([t, d], i) => (
-              <li key={t}><div><h3>{t}</h3><p className="mute">{i === 2 && payment ? `${payment}. ` : ""}{d}</p></div></li>
+              <li key={t}><p className="n">{String(i + 1).padStart(2, "0")}</p><h3>{t}</h3><p>{i === 2 && payment ? `${payment}. ` : ""}{d}</p></li>
             ))}
           </ol>
         </div>
       </section>
 
-      <section id="harga" style={{ background: "var(--paper)" }}>
+      <section id="harga" className="mist">
         <div className="wrap">
-          <p className="eyebrow">Harga</p>
-          <h2>Pilih yang pas untuk usahamu</h2>
-          <p className="sub">Belum termasuk domain &amp; hosting{domainCost ? ` (${domainCost})` : ""}, dibayar langsung ke penyedia atas namamu.</p>
+          <div className="head"><h2>Harga</h2><p>Belum termasuk domain dan hosting{domainCost ? ` (${domainCost})` : ""}, dibayar langsung ke penyedia atas namamu.</p></div>
           <div className="plans">
             {plans.map((p, i) => (
               <div className={`plan${i === 1 ? " hot" : ""}`} key={p.name}>
-                <h3>{p.name}</h3>
-                <div className="price">{p.price ?? "Tanya via WhatsApp"}</div>
-                <ul>
-                  <li><span>Halaman</span><span>{p.pages}</span></li>
-                  <li><span>Revisi</span><span>{p.revisi ?? "Sesuai penawaran"}</span></li>
-                  <li><span>Pendampingan</span><span>{p.support}</span></li>
-                </ul>
-                <Wa cls="dark" text={`Halo, saya tertarik paket ${p.name}`}>Tanya paket ini</Wa>
+                <div className="top"><h3>{p.name}</h3>{i === 1 && <span className="badge">Paling sering</span>}</div>
+                <p className={`price${p.price ? "" : " ask"}`}>{p.price ?? "Tanya via WhatsApp"}</p>
+                <div className="r"><span>Halaman</span><span>{p.pages}</span></div>
+                <div className="r"><span>Revisi</span><span>{p.revisi ?? "Sesuai penawaran"}</span></div>
+                <div className="r"><span>Pendampingan</span><span>{p.support}</span></div>
+                <Wa cls={i === 1 ? "" : "ghost"} text={`Halo, saya tertarik paket ${p.name}`}>Tanya paket ini</Wa>
               </div>
             ))}
           </div>
@@ -164,12 +181,12 @@ export default function Home() {
       {testimonials.length >= 2 && (
         <section>
           <div className="wrap">
-            <h2 style={{ marginBottom: 24 }}>Kata mereka</h2>
-            <div className="tgrid">
+            <h2 style={{ marginBottom: 56 }}>Kata mereka</h2>
+            <div className="plans">
               {testimonials.map((t) => (
-                <div className="card" key={t.name}>
-                  <blockquote>“{t.quote}”</blockquote>
-                  <p className="small"><b>{t.name}</b>, {t.biz}, {t.city}{t.link && <> · <a href={t.link} target="_blank" rel="noopener noreferrer">website</a></>}</p>
+                <div className="plan" key={t.name}>
+                  <p className="d" style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-.02em" }}>“{t.quote}”</p>
+                  <p className="mute" style={{ marginTop: 20, fontSize: 15 }}><b>{t.name}</b>, {t.biz}, {t.city}{t.link && <> · <a href={t.link} target="_blank" rel="noopener noreferrer">website</a></>}</p>
                 </div>
               ))}
             </div>
@@ -178,33 +195,34 @@ export default function Home() {
       )}
 
       <section id="faq">
-        <div className="wrap">
-          <p className="eyebrow">FAQ</p>
-          <h2 style={{ marginBottom: 24 }}>Pertanyaan yang sering muncul</h2>
-          {faq.map(([q, a]) => (
-            <details key={q}><summary>{q}</summary><p>{a}</p></details>
-          ))}
+        <div className="wrap faq">
+          <h2>Yang sering ditanyakan</h2>
+          <div>
+            {faq.map(([q, a], i) => (
+              <details key={q} open={i === 0}><summary>{q}</summary><p>{a}</p></details>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <div className="close">
+      <section style={{ paddingTop: 0, paddingBottom: 80 }}>
+        <div className="wrap close">
+          <div>
             <h2>Mau tanya-tanya dulu? Boleh.</h2>
-            <Wa text="Halo Likrea, saya mau tanya-tanya dulu.">Chat WhatsApp</Wa>
-            {site.village && <p className="small" style={{ marginTop: 20, color: "#b9c4ad" }}>Dari {site.village}, untuk usaha di mana saja.</p>}
+            {site.village && <p>Dari {site.village}, untuk usaha di mana saja.</p>}
           </div>
+          <Wa cls="ink" text="Halo Likrea, saya mau tanya-tanya dulu."><Chat />Chat WhatsApp</Wa>
         </div>
       </section>
 
       <footer>
         <div className="wrap">
-          <span>{[site.company, site.nib && `NIB ${site.nib}`, site.address, site.email].filter(Boolean).join(" · ")}</span>
-          <a href="/privasi">Kebijakan Privasi</a>
+          <p><b>likrea.</b> · {[site.company, site.nib && `NIB ${site.nib}`, site.address].filter(Boolean).join(" · ")}</p>
+          <p>{site.email && <>{site.email} · </>}<a href="/privasi">Kebijakan Privasi</a></p>
         </div>
       </footer>
 
-      <div className="sticky"><Wa text="Halo Likrea, saya mau tanya soal website untuk usaha saya.">Tanya via WhatsApp</Wa></div>
+      <div className="sticky"><Wa text="Halo Likrea, saya mau tanya soal website untuk usaha saya."><Chat />Tanya via WhatsApp</Wa></div>
     </main>
   );
 }
